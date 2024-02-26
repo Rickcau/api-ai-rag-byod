@@ -11,7 +11,7 @@ Also, make note that the function requires you to pass a JSON boday with the fol
                  "sessionId": "12345678",
                  "tenantId": "00001",
                  "prompt": "Can you tell what my healtcare benefits are for Northwinds"
-        }
+              }
         ~~~
 
 The client that is calling the Function will pass these values in and later they can be used to store/retreive prompt history as well being passed to the DB Query plugin, which in-turn will pass this information to the DAL for permission and role purposes.  The tenantID would be used for scenarios in-which you had custom logic that needs to query data from a specific tenant, the tenantId would allow you to make sure you are targeting the tenantId that that use has access to.
