@@ -37,6 +37,7 @@ namespace api_ai_rag_byod.Services
 
         private readonly SearchIndexClient _indexClient;
 
+        // not being used right now
         private const string _modelName = "text-embedding-ada-002";
         private const int _ModelDimensions = 1536;
         private const string _SemanticSearchConfigName = "my-semantic-config";
