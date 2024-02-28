@@ -14,5 +14,7 @@ namespace api_ai_rag_byod.Interfaces
             ReadOnlyMemory<float> vector,
             List<string>? searchFields = null,
             CancellationToken cancellationToken = default);
+        Task<string> SimpleHybridSearchAsync(ReadOnlyMemory<float> embedding, string query, int k = 3);
+        Task<string> SemanticHybridSearchAsync(ReadOnlyMemory<float> embedding, string query, int k = 3);
     }
 }
