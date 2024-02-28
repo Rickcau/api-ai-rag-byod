@@ -100,20 +100,23 @@ namespace api_ai_rag_byod.Services
             return embeddingList;
         }
 
-        public async Task SimpleHybridSearch(SearchClient searchClient, OpenAIClient openAIClient, string query, int k = 3)
+        public async Task<string> SimpleHybridSearchAsync(ReadOnlyMemory<float> embedding, string query, int k = 3)
         {
-            // Generate the embedding for the query  
-            var queryEmbeddings = await GenerateEmbeddings(query, openAIClient);
+            StringBuilder content = new StringBuilder();
+
+            // Get client for search operations
+            SearchClient searchClient = this._indexClient.GetSearchClient("obvector-1709061059373");
+
 
             // Perform the vector similarity search  
             var searchOptions = new SearchOptions
             {
                 VectorSearch = new()
                 {
-                    Queries = { new VectorizedQuery(queryEmbeddings.ToArray()) { KNearestNeighborsCount = k, Fields = { "contentVector" } } }
+                    Queries = { new VectorizedQuery(embedding.ToArray()) { KNearestNeighborsCount = k, Fields = { "vector" } } }
                 },
                 Size = k,
-                Select = { "title", "content", "category" },
+                Select = { "title", "chunk" },
             };
 
             SearchResults<SearchDocument> response = await searchClient.SearchAsync<SearchDocument>(query, searchOptions);
@@ -124,35 +127,38 @@ namespace api_ai_rag_byod.Services
                 count++;
                 Console.WriteLine($"Title: {result.Document["title"]}");
                 Console.WriteLine($"Score: {result.Score}\n");
-                Console.WriteLine($"Content: {result.Document["content"]}");
-                Console.WriteLine($"Category: {result.Document["category"]}\n");
+                Console.WriteLine($"Content: {result.Document["chunk"]}");
+                content.AppendLine(result.Document["chunk"].ToString() ?? string.Empty);
             }
             Console.WriteLine($"Total Results: {count}");
+
+            return content.ToString();
         }
 
-        public async Task SemanticHybridSearch(SearchClient searchClient, OpenAIClient openAIClient, string query, int k = 3)
+        public async Task<string> SemanticHybridSearchAsync(ReadOnlyMemory<float> embedding, string query, int k = 3)
         {
+            StringBuilder content = new StringBuilder();
+
             try
             {
-                // Generate the embedding for the query  
-                var queryEmbeddings = await GenerateEmbeddings(query, openAIClient);
 
-                // Perform the vector similarity search  
+                // Get client for search operations
+                SearchClient searchClient = this._indexClient.GetSearchClient("obvector-1709061059373");
+
                 var searchOptions = new SearchOptions
                 {
                     VectorSearch = new()
                     {
-                        Queries = { new VectorizedQuery(queryEmbeddings.ToArray()) { KNearestNeighborsCount = 3, Fields = { "contentVector" } } }
+                        Queries = { new VectorizedQuery(embedding.ToArray()) { KNearestNeighborsCount = 3, Fields = { "vector" } } }
                     },
                     SemanticSearch = new()
                     {
-                        SemanticConfigurationName = "my-semantic-config",
+                        SemanticConfigurationName = "obvector-1709061059373-semantic-configuration",
                         QueryCaption = new(QueryCaptionType.Extractive),
                         QueryAnswer = new(QueryAnswerType.Extractive),
                     },
                     QueryType = SearchQueryType.Semantic,
-                    Size = k,
-                    Select = { "title", "content", "category" },
+                    Select = { "title", "chunk", },
 
                 };
 
@@ -174,8 +180,8 @@ namespace api_ai_rag_byod.Services
                     Console.WriteLine($"Title: {result.Document["title"]}");
                     Console.WriteLine($"Reranker Score: {result.SemanticSearch.RerankerScore}");
                     Console.WriteLine($"Score: {result.Score}");
-                    Console.WriteLine($"Content: {result.Document["content"]}");
-                    Console.WriteLine($"Category: {result.Document["category"]}\n");
+                    Console.WriteLine($"Content: {result.Document["chunk"]}");
+                    content.AppendLine(result.Document.ToString());
 
                     if (result.SemanticSearch.Captions != null)
                     {
@@ -199,6 +205,7 @@ namespace api_ai_rag_byod.Services
             {
                 Console.WriteLine("Total Results: 0");
             }
+            return content.ToString();
         }
     }
 }

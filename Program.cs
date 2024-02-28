@@ -63,7 +63,7 @@ var host = new HostBuilder()
         services.AddSingleton<ChatHistory>(s =>
         {
             var chathistory = new ChatHistory();
-            chathistory.AddAssistantMessage(systemmsg);
+            chathistory.AddSystemMessage(systemmsg);
             return chathistory;
         });
 
