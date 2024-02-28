@@ -49,6 +49,23 @@ namespace api_ai_rag_byod.Plugins
             return await this._searchService.SimpleHybridSearchAsync(embedding, query) ?? string.Empty;
         }
 
+        [KernelFunction]
+        [Description("When a user asks question about a policy, or how to do something, or uses any acronym, or who someone is, use this function to perform the search")]
+        public async Task<string> SemanticHybridSearchAsync(
+          string query,
+          string collection = "obvector-1709061059373",
+          List<string>? searchFields = null,
+          CancellationToken cancellationToken = default)
+        {
+            // Convert string query to vector
+            #pragma warning disable SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+            ReadOnlyMemory<float> embedding = await this._textEmbeddingGenerationService.GenerateEmbeddingAsync(query, cancellationToken: cancellationToken);
+            #pragma warning restore SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+
+            // Perform simple search
+            return await this._searchService.SimpleHybridSearchAsync(embedding, query) ?? string.Empty;
+        }
+
 
     }
 }

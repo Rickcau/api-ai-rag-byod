@@ -53,7 +53,7 @@ var host = new HostBuilder()
             
             builder.Plugins.AddFromType<DBQueryPlugin>();
             builder.Plugins.AddFromType<AzureAISearchPlugin>();
-            
+
             return builder.Build();
         });
 
