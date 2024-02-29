@@ -23,13 +23,15 @@ namespace api_ai_rag_byod.Functions
         private readonly Kernel _kernel;
         private readonly IChatCompletionService _chat;
         private readonly ChatHistory _chatHistory;
+        private readonly AIHelper _aiHelper;
 
-        public ChatProvider(ILogger<ChatProvider> logger, Kernel kernel, IChatCompletionService chat, ChatHistory chatHistory)
+        public ChatProvider(ILogger<ChatProvider> logger, Kernel kernel, IChatCompletionService chat, ChatHistory chatHistory, AIHelper aiHelper)
         {
             _logger = logger;
             _kernel = kernel;
             _chat = chat;
             _chatHistory = chatHistory;
+            _aiHelper = aiHelper;
             // _kernel.ImportPluginFromObject(new TextAnalyticsPlugin(_client));
         }
 
@@ -45,8 +47,8 @@ namespace api_ai_rag_byod.Functions
                     "prompt": "Hello, What can you do for me?"
                 }
             */
-
-
+            // set TenantId
+            _aiHelper.TenantId = 1;
             _logger.LogInformation("C# HTTP SentimentAnalysis trigger function processed a request.");
 
             var requestBody = await new StreamReader(req.Body).ReadToEndAsync();

@@ -44,6 +44,9 @@ var host = new HostBuilder()
                 return new SearchIndexClient(new Uri(endpoint), new Azure.AzureKeyCredential(apiKey));
             });
 
+            // Add AIHelper to Container via DI
+            builder.Services.AddSingleton<IAIhelperService, AIHelper>();
+
             // Custom AzureAISearchService to configure request parameters and make a request.
             builder.Services.AddSingleton<IAzureAISearchService, AzureAISearchService>();
             
@@ -53,6 +56,7 @@ var host = new HostBuilder()
             
             builder.Plugins.AddFromType<DBQueryPlugin>();
             builder.Plugins.AddFromType<AzureAISearchPlugin>();
+
 
             return builder.Build();
         });

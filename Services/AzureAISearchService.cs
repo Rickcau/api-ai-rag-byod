@@ -31,7 +31,7 @@ namespace api_ai_rag_byod.Services
         [JsonPropertyName("contentVector")]
         public ReadOnlyMemory<float> ContentVector { get; set; }
     }
-    class AzureAISearchService : IAzureAISearchService
+    public class AzureAISearchService : IAzureAISearchService
     {
         private readonly List<string> _defaultVectorFields = new() { "contentVector" };
 
