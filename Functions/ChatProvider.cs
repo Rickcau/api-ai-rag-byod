@@ -14,6 +14,7 @@ using Microsoft.SemanticKernel.Http;
 using System.Net;
 using api_ai_rag_byod.Util;
 using System.Net.NetworkInformation;
+using api_ai_rag_byod.Interfaces;
 
 namespace api_ai_rag_byod.Functions
 {
@@ -23,9 +24,9 @@ namespace api_ai_rag_byod.Functions
         private readonly Kernel _kernel;
         private readonly IChatCompletionService _chat;
         private readonly ChatHistory _chatHistory;
-        private readonly AIHelper _aiHelper;
+        private readonly IAIhelperService _aiHelper;
 
-        public ChatProvider(ILogger<ChatProvider> logger, Kernel kernel, IChatCompletionService chat, ChatHistory chatHistory, AIHelper aiHelper)
+        public ChatProvider(ILogger<ChatProvider> logger, Kernel kernel, IChatCompletionService chat, ChatHistory chatHistory, IAIhelperService aiHelper)
         {
             _logger = logger;
             _kernel = kernel;

@@ -22,6 +22,8 @@ string _apiAISearchEndpoint = Helper.GetEnvironmentVariable("AISearchURL");
 string _apiAISearchKey= Helper.GetEnvironmentVariable("AISearchKey"); 
 string _textEmbeddingName = Helper.GetEnvironmentVariable("EmbeddingName");
 
+var aiHelper = new AIHelper();  
+
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
     .ConfigureServices(services =>
@@ -29,7 +31,7 @@ var host = new HostBuilder()
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
 
-        services.AddTransient<Kernel>(s =>
+        services.AddSingleton<Kernel>(s =>
         {
             var builder = Kernel.CreateBuilder();
             builder.AddAzureOpenAIChatCompletion(
@@ -45,7 +47,10 @@ var host = new HostBuilder()
             });
 
             // Add AIHelper to Container via DI
-            builder.Services.AddSingleton<IAIhelperService, AIHelper>();
+            builder.Services.AddSingleton<IAIhelperService, AIHelper>( s =>
+            {
+                return aiHelper;
+            });
 
             // Custom AzureAISearchService to configure request parameters and make a request.
             builder.Services.AddSingleton<IAzureAISearchService, AzureAISearchService>();
@@ -60,7 +65,10 @@ var host = new HostBuilder()
 
             return builder.Build();
         });
-
+        services.AddSingleton<IAIhelperService, AIHelper>(s =>
+        {
+            return aiHelper;
+        });
         services.AddSingleton<IChatCompletionService>(sp =>
                      sp.GetRequiredService<Kernel>().GetRequiredService<IChatCompletionService>());
         const string systemmsg = "You are a helpful friendly assistant that has knowledge of Org Builder Manuals.  You also have the ability to perform Org Build Database queries.  Do not answer any questions related to custom plugins or anything that is not related to the manuals or querying of the Org Builder Database.";
@@ -73,6 +81,7 @@ var host = new HostBuilder()
 
     })
     .Build();
+    aiHelper._kernel = host.Services.GetRequiredService<Kernel>();
 
 host.Run();
 

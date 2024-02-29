@@ -17,10 +17,10 @@ namespace api_ai_rag_byod.Plugins
 {
     public class DBQueryPlugin
     {
-        private readonly AIHelper _aiHelper;
+        private readonly IAIhelperService _aiHelper;
         private static bool _hrToggleContact;
 
-        public DBQueryPlugin(AIHelper aiHelper)
+        public DBQueryPlugin(IAIhelperService aiHelper)
         {
             this._aiHelper = aiHelper;
         }

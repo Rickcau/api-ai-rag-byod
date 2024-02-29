@@ -10,5 +10,6 @@ namespace api_ai_rag_byod.Interfaces
     public interface IAIhelperService
     {
         Task<string> GetTranslationAsync(string input);
+        int TenantId { get; set; }
     }
 }

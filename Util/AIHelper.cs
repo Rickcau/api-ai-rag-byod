@@ -14,7 +14,7 @@ namespace api_ai_rag_byod.Util
 {
     public class AIHelper : IAIhelperService
     {
-        private Kernel _kernel;
+        public Kernel _kernel;
         private List<string> _promptCollection = new List<string>();
 
         public int TenantId { get; set; }
@@ -59,9 +59,8 @@ namespace api_ai_rag_byod.Util
             Assistant: ";
 
 
-        public AIHelper(Kernel kernel)
+        public AIHelper()
         {
-            this._kernel = kernel;
             // Add the string variables to the list
             _promptCollection.Add(_promptPrompt1);
             _promptCollection.Add(_promptPrompt2);
