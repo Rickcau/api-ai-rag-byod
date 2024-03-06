@@ -14,6 +14,7 @@ using Microsoft.SemanticKernel.Http;
 using System.Net;
 using api_ai_rag_byod.Util;
 using System.Net.NetworkInformation;
+using Azure.AI.OpenAI;
 
 namespace api_ai_rag_byod.Functions
 {
@@ -78,10 +79,24 @@ namespace api_ai_rag_byod.Functions
                     _chatHistory,
                     executionSettings: new OpenAIPromptExecutionSettings { MaxTokens = 800, Temperature = 0.7, TopP = 0.0, ToolCallBehavior = ToolCallBehavior.AutoInvokeKernelFunctions },
                     kernel: _kernel);
-          
+
+            // Add sample code to extract the token useage from the response
+            // This is for example purposes, as it could be cached off to keep track of useage
+            // SK does not have method to estiamte token count for a give prompt prior to sending to AI
+            // so you could use the SharpToken Library of you wanted to check estimated the token size for a give prompt
+            // by doing so you could impliment logic to reduce the size of the prompt to reduce the token count
+
+            var metadata = result.Metadata;
+
+            if (metadata != null && metadata.ContainsKey("Usage"))
+            {
+                var usage = (CompletionsUsage?)metadata["Usage"];
+                Console.WriteLine($"Token usage. Input tokens: {usage?.PromptTokens}; Output tokens: {usage?.CompletionTokens}; Total tokens: {usage?.TotalTokens}");
+            }
+
 
             //  var func = _kernel.Plugins.TryGetFunction("AzureAISearchPlugin","SimpleHybridSearch", out function);
-            
+
             HttpResponseData response = req.CreateResponse(HttpStatusCode.OK);
             try
             {
