@@ -30,9 +30,9 @@ namespace api_ai_rag_byod.Util
                         Type = "AzureCognitiveSearch",
                         Parameters = new DataSourceParameters
                         {
-                            Endpoint = "https://orgbuildersearchservice.search.windows.net",
-                            Key = "DTjvT82mDxreV5CwcssRLFnoZn6HrlRJPFAT70G7OwAzSeBSx7Fz",
-                            IndexName = "obvector-1709061059373"
+                            Endpoint = "<Your AI Search Endpoint>",
+                            Key = "<Your AI Search Key>",
+                            IndexName = "<Your Index Name>"
                         }
                     }
                 },
